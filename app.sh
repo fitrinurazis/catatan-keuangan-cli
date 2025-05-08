@@ -5,7 +5,7 @@ RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
 CYAN="\e[36m"
-NC="\e[0m" #No Color
+RESET="\e[0m" #No Color
 
 
 # Array penyimpanan data
@@ -115,10 +115,35 @@ hapus_transaksi() {
     echo -e "${GREEN}Transaksi berhasil dihapus!${RESET}"
 }
 
+total_saldo() {
+    total_masuk=0
+    total_keluar=0
+
+    for i in "${!jenis[@]}"; do
+        if [ "${jenis[$i]}" == "masuk" ]; then
+            ((total_masuk+=jumlah[$i]))
+        else
+            ((total_keluar+=jumlah[$i]))
+        fi
+    done
+
+    saldo=$((total_masuk - total_keluar))
+
+    echo -e "${GREEN}------------------${RED}-----------------${CYAN}-----------------${RESET}"
+    printf  "${GREEN}| %-15s| ${RED}%-15s| ${CYAN}%-15s|\n" "Pemasukan" "Pengeluaran" "Saldo"
+    echo -e "${GREEN}------------------${RED}-----------------${CYAN}-----------------${RESET}"
+    printf  "${GREEN}| Rp%-13s| ${RED}Rp%-13s| ${CYAN}Rp%-13s|\n" "$total_masuk" "$total_keluar" "$saldo"
+    echo -e "${GREEN}------------------${RED}-----------------${CYAN}-----------------${RESET}"
+}
+
 
 # Menu Utama
 while true; do
-    echo -e "\n${CYAN}===== Aplikasi Catatan Keuangan =====${NC}"
+    echo -e "\n${CYAN}===== Aplikasi Catatan Keuangan =====${RESET}"
+    echo -e "${YELLOW}Selamat datang di aplikasi catatan keuangan Anda.${RESET}"
+    echo ""
+    total_saldo
+    echo ""
     echo "1. Tambah Transaksi"
     echo "2. Tampilkan Semua Transaksi"
     echo "3. Edit Transaksi"
@@ -131,6 +156,7 @@ while true; do
         2) tampilkan_transaksi ;;
         3) edit_transaksi ;;
         4) hapus_transaksi ;;
-
+        5) echo -e "${YELLOW}Terima kasih!${RESET}"; break ;;
+        *) echo -e "${RED}Opsi tidak valid!${RESET}" ;;
     esac
 done
