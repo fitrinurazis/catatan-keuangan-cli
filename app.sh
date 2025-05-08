@@ -7,11 +7,32 @@ YELLOW="\e[33m"
 CYAN="\e[36m"
 RESET="\e[0m" #No Color
 
+# Nama File
+DATA_FILE="data.txt"
 
 # Array penyimpanan data
 declare -a jenis_transaksi
 declare -a nominal_transaksi
 declare -a deskripsi_transaksi
+
+# Fungsi: Muat Data dari File
+muat_data() {
+    if [[ -f $DATA_FILE ]]; then
+        while IFS='|' read -r jenis nominal deskripsi; do
+            jenis_transaksi+=("$jenis")
+            nominal_transaksi+=("$nominal")
+            deskripsi_transaksi+=("$deskripsi")
+        done < "$DATA_FILE"
+    fi
+}
+
+# Fungsi: Simpan Data ke File
+simpan_data() {
+    > "$DATA_FILE" # kosongkan dulu
+    for ((i=0; i<${#jenis_transaksi[@]}; i++)); do
+        echo "${jenis_transaksi[$i]}|${nominal_transaksi[$i]}|${deskripsi_transaksi[$i]}" >> "$DATA_FILE"
+    done
+}
 
 # Fungsi: Tambah Transaksi
 tambah_transaksi() {
@@ -115,15 +136,17 @@ hapus_transaksi() {
     echo -e "${GREEN}Transaksi berhasil dihapus!${RESET}"
 }
 
+
+# Fungsi Total Saldo
 total_saldo() {
     total_masuk=0
     total_keluar=0
 
-    for i in "${!jenis[@]}"; do
-        if [ "${jenis[$i]}" == "masuk" ]; then
-            ((total_masuk+=jumlah[$i]))
+    for i in "${!jenis_transaksi[@]}"; do
+        if [ "${jenis_transaksi[$i]}" == "masuk" ]; then
+            ((total_masuk+=${nominal_transaksi[$i]}))
         else
-            ((total_keluar+=jumlah[$i]))
+            ((total_keluar+=${nominal_transaksi[$i]}))
         fi
     done
 
@@ -136,6 +159,9 @@ total_saldo() {
     echo -e "${GREEN}------------------${RED}-----------------${CYAN}-----------------${RESET}"
 }
 
+
+# Muat data saat aplikasi dijalankan
+muat_data
 
 # Menu Utama
 while true; do
