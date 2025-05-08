@@ -93,6 +93,27 @@ edit_transaksi() {
 }
 
 
+# Fungsi: Hapus Transaksi
+hapus_transaksi() {
+    tampilkan_transaksi
+    read -p "Masukkan indeks transaksi yang ingin dihapus: " index
+    if ! [[ "$index" =~ ^[0-9]+$ ]] || [[ -z "${jenis_transaksi[$index]}" ]]; then
+        echo -e "${RED}Indeks tidak valid!${RESET}"
+        return
+    fi
+
+    unset jenis_transaksi[$index]
+    unset nominal_transaksi[$index]
+    unset deskripsi_transaksi[$index]
+
+    # Reindex array
+    jenis_transaksi=("${jenis_transaksi[@]}")
+    nominal_transaksi=("${nominal_transaksi[@]}")
+    deskripsi_transaksi=("${deskripsi_transaksi[@]}")
+
+    simpan_data
+    echo -e "${GREEN}Transaksi berhasil dihapus!${RESET}"
+}
 
 
 # Menu Utama
@@ -109,6 +130,7 @@ while true; do
         1) tambah_transaksi ;;
         2) tampilkan_transaksi ;;
         3) edit_transaksi ;;
+        4) hapus_transaksi ;;
 
     esac
 done
