@@ -41,6 +41,19 @@ tambah_transaksi() {
     echo -e "${GREEN}Transaksi berhasil ditambahkan!${RESET}"
 }
 
+# Fungsi: Tampilkan Semua Transaksi
+tampilkan_transaksi() {
+    echo -e "${CYAN}=== Daftar Transaksi ===${RESET}"
+    if [[ ${#jenis_transaksi[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}Belum ada transaksi.${RESET}"
+        return
+    fi
+
+    for ((i=0; i<${#jenis_transaksi[@]}; i++)); do
+        echo -e "${YELLOW}[$i] Jenis: ${jenis_transaksi[$i]}, Nominal: Rp${nominal_transaksi[$i]}, Deskripsi: ${deskripsi_transaksi[$i]}${RESET}"
+    done
+}
+
 # Menu Utama
 while true; do
     echo -e "\n${CYAN}===== Aplikasi Catatan Keuangan =====${NC}"
@@ -53,5 +66,6 @@ while true; do
 
     case $pilihan in
         1) tambah_transaksi ;;
+        2) tampilkan_transaksi ;;
     esac
 done
