@@ -54,6 +54,47 @@ tampilkan_transaksi() {
     done
 }
 
+# Fungsi: Edit Transaksi
+edit_transaksi() {
+    tampilkan_transaksi
+    read -p "Masukkan indeks transaksi yang ingin diedit: " index
+    if ! [[ "$index" =~ ^[0-9]+$ ]] || [[ -z "${jenis_transaksi[$index]}" ]]; then
+        echo -e "${RED}Indeks tidak valid!${RESET}"
+        return
+    fi
+
+    echo -e "${CYAN}Transaksi saat ini:${RESET}"
+    echo -e "${YELLOW}Jenis: ${jenis_transaksi[$index]}, Nominal: Rp${nominal_transaksi[$index]}, Deskripsi: ${deskripsi_transaksi[$index]}${RESET}"
+
+    read -p "Jenis baru (masuk/keluar): " jenis
+    if [[ "$jenis" != "masuk" && "$jenis" != "keluar" ]]; then
+        echo -e "${RED}Jenis tidak valid!${RESET}"
+        return
+    fi
+
+    read -p "Nominal baru: " nominal
+    if ! [[ "$nominal" =~ ^[0-9]+$ ]]; then
+        echo -e "${RED}Nominal harus angka!${RESET}"
+        return
+    fi
+
+    read -p "Deskripsi baru: " deskripsi
+    if [[ -z "$deskripsi" ]]; then
+        echo -e "${RED}Deskripsi tidak boleh kosong!${RESET}"
+        return
+    fi
+
+    jenis_transaksi[$index]="$jenis"
+    nominal_transaksi[$index]="$nominal"
+    deskripsi_transaksi[$index]="$deskripsi"
+
+    simpan_data
+    echo -e "${GREEN}Transaksi berhasil diubah!${RESET}"
+}
+
+
+
+
 # Menu Utama
 while true; do
     echo -e "\n${CYAN}===== Aplikasi Catatan Keuangan =====${NC}"
@@ -67,5 +108,7 @@ while true; do
     case $pilihan in
         1) tambah_transaksi ;;
         2) tampilkan_transaksi ;;
+        3) edit_transaksi ;;
+
     esac
 done
